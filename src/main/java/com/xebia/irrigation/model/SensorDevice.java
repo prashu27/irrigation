@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Component
 public class SensorDevice {
-    Boolean isAvaiable;
-    String waterLevel;
-    int duration;
+   private Boolean isAvaiable;
+   private String waterLevel;
+   private int duration;
 }

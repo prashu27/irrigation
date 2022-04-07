@@ -1,4 +1,5 @@
 package com.xebia.irrigation.service;
+import com.sun.xml.bind.v2.TODO;
 import com.xebia.irrigation.enums.IrrigationStatus;
 import com.xebia.irrigation.enums.WaterLevel;
 import com.xebia.irrigation.exception.SensorDeviceNotAvaialable;
@@ -30,11 +31,12 @@ public class SensorDeviceIntegrationService {
         this.repository = repository;
     }
 
+   /* this method will evaluate the water level (Mid/LOW/HIGH) using the crops type(BAJRA/CORN etc) and area of the plot*/
     public void startIrrigation(Slot slot) throws SensorDeviceNotAvaialable {
        log.info("Irrigation has been started  :" +slot.getSlotId());
         Plot plot=slot.getPlot();
         Optional<WaterLevel> waterLevel=WaterLevel.getWaterLevel(SensorUtil.getWaterAmountPerArea(plot.getArea(),plot.getCroptype()));
-        sensorDevice.setWaterLevel(waterLevel.get().waterlevel);
+        sensorDevice.setWaterLevel(WaterLevel.LOW.toString());
         if(isSensorDeviceAvaiable())
        {
            log.info("Irrigation request has been processed by sensor");
@@ -53,10 +55,7 @@ public class SensorDeviceIntegrationService {
 
     @Retryable(value = { SensorDeviceNotAvaialable.class }, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public Boolean isSensorDeviceAvaiable() throws SensorDeviceNotAvaialable {
-          Boolean value=false;
-          if(!value){
-              throw new SensorDeviceNotAvaialable("Sensor not available");
-          }
+        //TODO: Sensor not avaiable derived from Sensor Integration
           return true;
       }
 

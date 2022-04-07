@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface PlotAPIConfigService {
 
-    Long createPlot(Plot plotrequest);
+    Plot createPlot(Plot plotrequest);
     Plot getPlotdetails(long id);
     List<Plot> getAllPlotDetails();
     Slot updateSlot(Long plotId,Long slotId,Slot slotrequest);

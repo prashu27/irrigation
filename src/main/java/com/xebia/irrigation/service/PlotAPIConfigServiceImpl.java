@@ -9,11 +9,11 @@ import com.xebia.irrigation.repository.PlotSlotRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -28,11 +28,18 @@ public class PlotAPIConfigServiceImpl implements PlotAPIConfigService {
 
 
     @Override
-    public Long createPlot(Plot plotrequest) {
+    public Plot createPlot(Plot plotrequest) {
         plotrequest.setCreateDate(ZonedDateTime.now());
         plotrequest.setLastUpdatedDate(ZonedDateTime.now());
         Plot plot = plotIrrigationRepository.save(plotrequest);
-              return plot.getPlotId();
+
+        for (Slot slot : plotrequest.getSlots()) {
+            slot.setPlot(plotrequest);
+            Slot s = plotSlotRepository.save(slot);
+            log.info("Slot created" + s.getSlotId());
+        }
+
+        return plot;
     }
 
     public Plot getPlotdetails(long id) {
@@ -48,7 +55,7 @@ public class PlotAPIConfigServiceImpl implements PlotAPIConfigService {
     public Slot updateSlot(Long plotId, Long slotId, Slot slotRequest) {
         Optional<Plot> plot = plotIrrigationRepository.findById(plotId);
         if (plot.isPresent()) {
-            Set<Slot> plotSlots = plot.get().getSlots();
+            List<Slot> plotSlots = plot.get().getSlots();
             Optional<Slot> slot = plotSlots.stream().filter(Slot -> Slot.getSlotId() == slotId).findFirst();
             slot.orElseThrow(NoSuchElementException::new);
             Slot slottoupdate = slot.get();
@@ -65,7 +72,7 @@ public class PlotAPIConfigServiceImpl implements PlotAPIConfigService {
     public Plot configurePlotSlot(Long plotId, Slot slotrequest) {
         log.info("Add new slot for the plot id :{}", plotId);
         Plot plot = plotIrrigationRepository.findById(plotId).orElseThrow(() -> new PlotNotFoundException("Plot doesn't Exist"));
-        Set<Slot> slots = plot.getSlots();
+        List<Slot> slots = plot.getSlots();
         slots.add(slotrequest);
         plot.setSlots(slots);
         plot = plotIrrigationRepository.save(plot);

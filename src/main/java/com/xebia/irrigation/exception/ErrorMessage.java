@@ -5,10 +5,10 @@ public class ErrorMessage {
     String errMessage;
     String description;
 
-    ErrorMessage(int status,String errMessage,String description){
-        this.status=status;
-        this.errMessage=errMessage;
-        this.description=description;
+    ErrorMessage(int status, String errMessage, String description) {
+        this.status = status;
+        this.errMessage = errMessage;
+        this.description = description;
     }
 }
 
